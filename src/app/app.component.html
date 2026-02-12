@@ -1,3 +1,19 @@
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  <ion-menu side="start" menuId="m1" contentId="main">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Menu Content</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content >
+    <ion-list>
+      <ion-menu-toggle>
+      <ion-item button [routerLink]="['']">Home</ion-item>
+      <ion-item button [routerLink]="['/note-list']">Lista Notas</ion-item>
+      <ion-item button [routerLink]="['/create-note']">Crear Nota</ion-item>
+      </ion-menu-toggle>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+  <ion-router-outlet id="main" ></ion-router-outlet>
 </ion-app>

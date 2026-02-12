@@ -1,0 +1,47 @@
+:host {
+  display: block;
+}
+
+.notes-table {
+  --ion-grid-padding: 0;
+}
+
+.table-header {
+  background: var(--ion-color-light, #f7f8fa);
+  font-weight: 600;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 8px 0;
+}
+
+.table-row {
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.details-grid {
+  background: transparent;
+  margin: 4px 0 0 0;
+}
+
+.details-header {
+  font-size: 0.9rem;
+  color: #444;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 4px;
+  margin-bottom: 6px;
+}
+
+ion-col {
+  display: flex;
+  align-items: center;
+}
+
+.search-bar {
+  margin: 8px 0;
+}
+
+.note-meta {
+  font-size: 0.85rem;
+  color: #999;
+  margin: 4px 0 0 0;
+}
