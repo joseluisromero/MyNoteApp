@@ -2,8 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {  FormsModule } from '@angular/forms';
 import { IonicModule} from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { trash, addCircleOutline } from 'ionicons/icons';
 import { NoteService } from '../services/note-service';
 import { Note } from '../models/Note';
+
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-note',
@@ -20,13 +24,21 @@ export class CreateNotePage {
     createdAt: new Date().toISOString(),
   };
 
-  constructor(private noteService: NoteService) {}
+  constructor(private noteService: NoteService, private router: Router) {
+    addIcons({ trash, addCircleOutline });
+  }
 
-  onSubmit() {
+  async onSubmit() {
     console.log('📤 Sending note:', this.note);
 
     const guid = this.generateGUID();
-    this.noteService.createNote(this.note, 'angular', 'jlromero', guid);
+    try {
+      await this.noteService.createNote(this.note, 'angular', 'jlromero', guid);
+      this.router.navigate(['/note-list']);
+    } catch (error) {
+       console.error('Error creating note:', error);
+       alert('Error al crear la nota');
+    }
   }
 
   addDetail() {

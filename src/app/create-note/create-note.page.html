@@ -7,53 +7,63 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="ion-padding">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">createNote</ion-title>
+      <ion-title size="large">Crear Nota</ion-title>
     </ion-toolbar>
   </ion-header>
-</ion-content>
-<ion-content>
-<form (ngSubmit)="onSubmit()" #noteForm="ngForm">
 
-  <ion-item>
-    <ion-label position="stacked">Title</ion-label>
-    <ion-input
-      name="title"
-      [(ngModel)]="note.title"
-      required>
-    </ion-input>
-  </ion-item>
+  <form (ngSubmit)="onSubmit()" #noteForm="ngForm">
 
-  <ion-item *ngFor="let detail of note.details; let i = index">
-    <ion-label position="stacked">Detail {{i + 1}}</ion-label>
-      <ion-input
-    placeholder="Key"
-    name="key{{i}}"
-    [(ngModel)]="detail.key"
-    required>
-  </ion-input>
+    <ion-item lines="full" class="ion-margin-bottom">
+      <ion-label position="stacked">Título de la nota</ion-label>
+      <ion-input name="title" [(ngModel)]="note.title" required placeholder="Ingrese el título de la nota"
+        maxlength="255" counter="true">
+      </ion-input>
+    </ion-item>
 
-  <ion-input
-    placeholder="Value"
-    name="value{{i}}"
-    [(ngModel)]="detail.value"
-    required>
-  </ion-input>
+    <div class="ion-d-flex ion-justify-content-between ion-align-items-center ion-padding-bottom">
+      <ion-label><strong>Detalles</strong></ion-label>
+      <ion-button size="small" fill="outline" (click)="addDetail()">
+        <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+        {{ note.details.length > 0 ? 'Agregar Otro Detalle' : 'Agregar Detalle' }}
+      </ion-button>
+    </div>
 
-    <ion-button type="button" fill="clear" color="danger" (click)="removeDetail(i)">
-      <ion-icon slot="icon-only" name="trash"></ion-icon>
+    <div *ngFor="let detail of note.details; let i = index">
+      <ion-card class="ion-margin-bottom">
+        <ion-card-header>
+          <ion-card-subtitle>Detalle # {{i + 1}} de la nota</ion-card-subtitle>
+          <ion-button fill="clear" color="danger" size="small" (click)="removeDetail(i)"
+            style="position: absolute; right: 0; top: 0;">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-button>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-item lines="none">
+            <ion-label position="stacked">Clave del detalle</ion-label>
+            <ion-input placeholder="Ej: email" name="key{{i}}" [(ngModel)]="detail.key" required maxlength="255"
+              counter="true">
+            </ion-input>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-label position="stacked">Valor del detalle</ion-label>
+            <ion-input placeholder="Ej: jperez@gmail.com" name="value{{i}}" [(ngModel)]="detail.value" required>
+            </ion-input>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-checkbox slot="start" [(ngModel)]="detail.sensitive" name="sensitive{{i}}"></ion-checkbox>
+            <ion-label>Es sensible su valor</ion-label>
+          </ion-item>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <ion-button type="submit" expand="block" color="primary" class="ion-margin-top ion-margin-bottom"
+      [disabled]="!noteForm.valid">
+      Crear Nota
     </ion-button>
-  </ion-item>
 
-  <ion-button type="button" fill="clear" (click)="addDetail()">
-    <ion-icon slot="icon-only" name="add"></ion-icon>
-  </ion-button>
-
-  <ion-button type="submit" expand="block" [disabled]="!noteForm.valid">
-    Create Note
-  </ion-button>
-
-</form>
+  </form>
 </ion-content>

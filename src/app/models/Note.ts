@@ -2,6 +2,7 @@ export interface NoteDetail {
     key: string;
     value: string;
     sensitive: boolean;
+    visible?: boolean;
 }
 
 export interface Note {

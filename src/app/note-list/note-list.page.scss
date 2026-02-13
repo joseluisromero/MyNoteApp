@@ -18,22 +18,73 @@
   border-bottom: 1px solid #f0f0f0;
 }
 
+.scroll-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  /* Suaviza el scroll en iOS */
+  padding-bottom: 8px;
+  /* Espacio para el scrollbar */
+  margin-bottom: 16px;
+
+  /* Estilizar scrollbar para webkit */
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #bbb;
+  }
+}
+
 .details-grid {
+  min-width: 500px;
+  /* Ancho mínimo para forzar scroll en pantallas pequeñas */
   background: transparent;
-  margin: 4px 0 0 0;
+  margin: 0;
 }
 
 .details-header {
   font-size: 0.9rem;
-  color: #444;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 4px;
-  margin-bottom: 6px;
+  font-weight: 700;
+  color: var(--ion-color-dark);
+  background-color: var(--ion-color-light);
+  border-bottom: 2px solid var(--ion-color-medium-tint);
+  padding: 8px 0;
+  margin-bottom: 0;
+}
+
+.details-row {
+  border-bottom: 1px solid var(--ion-color-light-shade);
+  padding: 8px 0;
+
+  &:last-child {
+    border-bottom: none;
+  }
 }
 
 ion-col {
   display: flex;
   align-items: center;
+  word-break: break-word;
+  /* Evita desbordamiento de texto */
+  padding: 4px 8px;
+
+  /* Estilos específicos para checkboxes alineados */
+  ion-checkbox {
+    --size: 16px;
+    margin-right: 4px;
+    vertical-align: middle;
+  }
 }
 
 .search-bar {
@@ -42,6 +93,6 @@ ion-col {
 
 .note-meta {
   font-size: 0.85rem;
-  color: #999;
+  color: var(--ion-color-medium);
   margin: 4px 0 0 0;
 }

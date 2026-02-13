@@ -2,34 +2,65 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule} from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { trashOutline, createOutline, eyeOutline, eyeOffOutline, add } from 'ionicons/icons';
 import { Note } from '../models/Note';
 import { NoteService } from '../services/note-service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-note-list',
   templateUrl: './note-list.page.html',
   styleUrls: ['./note-list.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule,  IonicModule]
+  imports: [CommonModule, FormsModule,  IonicModule, RouterLink]
 })
 export class NoteListPage implements OnInit {
   
-    notes: Note[] = [];
-        searchTerm: string = '';
+  xDevice = 'angular';
+  xUser = 'jlromero';
+  xGuid = '';
+  
+  notes: Note[] = [];
+  searchTerm: string = '';
 
-    noteService = inject(NoteService);
+  noteService = inject(NoteService);
 
-
-  async  ngOnInit() {
-    const guid = this.generateGUID();
-    console.log('x-guid:', guid);
-
-    const response = await this.noteService.getAllNotesWithHeaders('angular', 'jlromero', guid);
-
-    this.notes = response;
+  constructor() {
+    addIcons({ trashOutline, createOutline, eyeOutline, eyeOffOutline, add });
   }
 
-    /** Filtra notas por título según el término de búsqueda */
+  ngOnInit() {
+    this.xGuid = this.generateGUID();
+    console.log('x-guid:', this.xGuid);
+  }
+
+  ionViewWillEnter() {
+    this.loadNotes();
+  }
+
+  async loadNotes() {
+    try {
+      this.notes = await this.noteService.getAllNotesWithHeaders(this.xDevice, this.xUser, this.xGuid);
+    } catch (error) {
+      console.error('Error loading notes:', error);
+    }
+  }
+
+  async deleteNote(noteId: number) {
+    if (!confirm('¿Estás seguro de eliminar esta nota?')) return;
+    
+    try {
+      await this.noteService.deleteNote(noteId, this.xDevice, this.xUser, this.xGuid);
+      // Actualizar la lista localmente o recargar
+      this.notes = this.notes.filter(n => n.noteId !== noteId);
+    } catch (error) {
+      console.error('Error deleting note:', error);
+      alert('Error al eliminar la nota');
+    }
+  }
+
+  /** Filtra notas por título según el término de búsqueda */
   getFilteredNotes(): Note[] {
     if (!this.searchTerm.trim()) {
       return this.notes;
