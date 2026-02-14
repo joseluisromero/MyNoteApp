@@ -1,7 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {  FormsModule } from '@angular/forms';
-import { IonicModule} from '@ionic/angular';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonButtons,
+  IonMenuButton,
+  IonItem,
+  IonLabel,
+  IonInput,
+  IonButton,
+  IonIcon,
+  IonCard,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardContent,
+  IonCheckbox,
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { trash, addCircleOutline } from 'ionicons/icons';
 import { NoteService } from '../services/note-service';
@@ -14,7 +31,26 @@ import { Router } from '@angular/router';
   templateUrl: './create-note.page.html',
   styleUrls: ['./create-note.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonButtons,
+    IonMenuButton,
+    IonItem,
+    IonLabel,
+    IonInput,
+    IonButton,
+    IonIcon,
+    IonCard,
+    IonCardHeader,
+    IonCardSubtitle,
+    IonCardContent,
+    IonCheckbox,
+  ]
 })
 export class CreateNotePage {
    note: Note = {

@@ -1,7 +1,27 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule} from '@ionic/angular';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonButtons,
+  IonMenuButton,
+  IonSearchbar,
+  IonAccordionGroup,
+  IonAccordion,
+  IonItem,
+  IonLabel,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonCheckbox,
+  IonButton,
+  IonIcon,
+  IonFab,
+  IonFabButton,
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { trashOutline, createOutline, eyeOutline, eyeOffOutline, add } from 'ionicons/icons';
 import { Note } from '../models/Note';
@@ -13,7 +33,30 @@ import { RouterLink } from '@angular/router';
   templateUrl: './note-list.page.html',
   styleUrls: ['./note-list.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule,  IonicModule, RouterLink]
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterLink,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonButtons,
+    IonMenuButton,
+    IonSearchbar,
+    IonAccordionGroup,
+    IonAccordion,
+    IonItem,
+    IonLabel,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonCheckbox,
+    IonButton,
+    IonIcon,
+    IonFab,
+    IonFabButton,
+  ]
 })
 export class NoteListPage implements OnInit {
   
