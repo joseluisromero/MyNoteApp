@@ -2,13 +2,29 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Note } from '../models/Note';
 import { firstValueFrom } from 'rxjs';
+import { Storage } from '@ionic/storage-angular';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NoteService {
-    httClient= inject(HttpClient);
+  private httClient = inject(HttpClient);
+  private storage = inject(Storage);
+  private _storage: Storage | null = null;
 
+  /** Bandera para decidir dónde guardar las notas */
+  public useLocalStorage: boolean = true;
+
+  API_URL_BASE = 'http://192.168.1.3:8080';
+
+  constructor() {
+    this.init();
+  }
+
+  async init() {
+    const storage = await this.storage.create();
+    this._storage = storage;
+  }
 
   /** Construye las cabeceras requeridas por el servicio */
   buildRequiredHeaders(xDevice: string, xUser: string, xGuid: string, xDeviceIp: string = '127.0.0.1'): HttpHeaders {
@@ -20,22 +36,23 @@ export class NoteService {
   }
 
   /** Obtiene todas las notas enviando las cabeceras requeridas */
-  getAllNotesWithHeaders(xDevice: string, xUser: string, xGuid: string): Promise<Note[]> {
+  async getAllNotesWithHeaders(xDevice: string, xUser: string, xGuid: string): Promise<Note[]> {
+    if (this.useLocalStorage) {
+      console.log('📦 Obteniendo notas de Almacenamiento Local');
+      return (await this._storage?.get('notes')) || [];
+    }
+
     const headers = this.buildRequiredHeaders(xDevice, xUser, xGuid);
     
-    // Log para verificar que las cabeceras se están construyendo correctamente
     console.log('📤 Enviando petición GET a /api/notes con cabeceras:');
     headers.keys().forEach(key => {
       console.log(`  ${key}: ${headers.get(key)}`);
     });
 
-    // Call backend directly and observe full response to inspect response headers.
     return firstValueFrom(
-      this.httClient.get<Note[]>('http://localhost:8080/api/notes', { headers, observe: 'response' as const })
+      this.httClient.get<Note[]>(this.API_URL_BASE + '/api/notes', { headers, observe: 'response' as const })
     ).then(response => {
       console.log('✅ Respuesta exitosa, status:', response.status);
-      console.log('📥 Response headers:', response.headers.keys());
-      response.headers.keys().forEach(key => console.log(`  ${key}: ${response.headers.get(key)}`));
       return response.body || [];
     }).catch(error => {
       console.error('❌ Error en la petición:', error);
@@ -44,20 +61,36 @@ export class NoteService {
   }
 
   /** Obtiene una nota por su ID */
-  getNoteById(noteId: number, xDevice: string, xUser: string, xGuid: string): Promise<Note> {
+  async getNoteById(noteId: number, xDevice: string, xUser: string, xGuid: string): Promise<Note> {
+    if (this.useLocalStorage) {
+      const notes = (await this._storage?.get('notes')) || [];
+      const note = notes.find((n: Note) => n.noteId === noteId);
+      if (!note) throw new Error('Nota no encontrada');
+      return note;
+    }
+
     const headers = this.buildRequiredHeaders(xDevice, xUser, xGuid);
     return firstValueFrom(
-      this.httClient.get<Note>(`http://localhost:8080/api/notes/${noteId}`, { headers })
+      this.httClient.get<Note>(this.API_URL_BASE + `/api/notes/${noteId}`, { headers })
     );
   }
 
-  createNote(data: Note,xDevice: string, xUser: string, xGuid: string): Promise<Note> {
+  async createNote(data: Note, xDevice: string, xUser: string, xGuid: string): Promise<Note> {
+    if (this.useLocalStorage) {
+      console.log('📦 Guardando nota en Almacenamiento Local');
+      const notes = (await this._storage?.get('notes')) || [];
+      // Generamos un ID si no viene uno
+      if (!data.noteId) data.noteId = Date.now();
+      notes.push(data);
+      await this._storage?.set('notes', notes);
+      return data;
+    }
+
     const headers = this.buildRequiredHeaders(xDevice, xUser, xGuid);
 
     return firstValueFrom(
-      this.httClient.post<Note>('http://localhost:8080/api/notes', data, { headers })
+      this.httClient.post<Note>(this.API_URL_BASE + '/api/notes', data, { headers })
     ).then(response => {
-      console.log('✅ Nota creada exitosamente:', response);
       return response;
     }).catch(error => {
       console.error('❌ Error al crear la nota:', error);
@@ -66,33 +99,37 @@ export class NoteService {
   }
 
   /** Actualiza una nota existente */
-  updateNote(data: Note, xDevice: string, xUser: string, xGuid: string, xDeviceIp: string = '127.0.0.1'): Promise<Note> {
-    const headers = this.buildRequiredHeaders(xDevice, xUser, xGuid, xDeviceIp);
-    console.log(`📝 Actualizando nota ${data.noteId}...`);
+  async updateNote(data: Note, xDevice: string, xUser: string, xGuid: string, xDeviceIp: string = '127.0.0.1'): Promise<Note> {
+    if (this.useLocalStorage) {
+      console.log('� Actualizando nota en Almacenamiento Local');
+      const notes = (await this._storage?.get('notes')) || [];
+      const index = notes.findIndex((n: Note) => n.noteId === data.noteId);
+      if (index !== -1) {
+        notes[index] = data;
+        await this._storage?.set('notes', notes);
+      }
+      return data;
+    }
 
+    const headers = this.buildRequiredHeaders(xDevice, xUser, xGuid, xDeviceIp);
     return firstValueFrom(
-      this.httClient.put<Note>(`http://localhost:8080/api/notes/${data.noteId}`, data, { headers })
-    ).then(response => {
-      console.log('✅ Nota actualizada exitosamente:', response);
-      return response;
-    }).catch(error => {
-      console.error('❌ Error al actualizar la nota:', error);
-      throw error;
-    });
+      this.httClient.put<Note>(this.API_URL_BASE + `/api/notes/${data.noteId}`, data, { headers })
+    );
   }
 
   /** Elimina una nota por su ID */
-  deleteNote(noteId: number, xDevice: string, xUser: string, xGuid: string): Promise<void> {
+  async deleteNote(noteId: number, xDevice: string, xUser: string, xGuid: string): Promise<void> {
+    if (this.useLocalStorage) {
+      console.log('� Eliminando nota de Almacenamiento Local');
+      let notes = (await this._storage?.get('notes')) || [];
+      notes = notes.filter((n: Note) => n.noteId !== noteId);
+      await this._storage?.set('notes', notes);
+      return;
+    }
+
     const headers = this.buildRequiredHeaders(xDevice, xUser, xGuid);
-    console.log(`🗑️ Eliminando nota ${noteId}...`);
-    
     return firstValueFrom(
-      this.httClient.delete<void>(`http://localhost:8080/api/notes/${noteId}`, { headers })
-    ).then(() => {
-      console.log(`✅ Nota ${noteId} eliminada exitosamente.`);
-    }).catch(error => {
-      console.error(`❌ Error al eliminar la nota ${noteId}:`, error);
-      throw error;
-    });
+      this.httClient.delete<void>(this.API_URL_BASE + `/api/notes/${noteId}`, { headers })
+    );
   }
 }
