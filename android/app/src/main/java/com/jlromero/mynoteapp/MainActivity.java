@@ -1,4 +1,4 @@
-package io.ionic.starter;
+package com.jlromero.mynoteapp;
 
 import com.getcapacitor.BridgeActivity;
 

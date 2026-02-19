@@ -15,6 +15,10 @@ export const routes: Routes = [
   {
     path: 'update-note/:id',
     loadComponent: () => import('./update-note/update-note.page').then( m => m.UpdateNotePage)
+  },
+  {
+    path: 'security-auth',
+    loadComponent: () => import('./security-auth.page')
   }
 
 ];

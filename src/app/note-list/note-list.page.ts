@@ -16,7 +16,6 @@ import {
   IonGrid,
   IonRow,
   IonCol,
-  IonCheckbox,
   IonButton,
   IonIcon,
   IonFab,
@@ -26,6 +25,7 @@ import { addIcons } from 'ionicons';
 import { trashOutline, createOutline, eyeOutline, eyeOffOutline, add } from 'ionicons/icons';
 import { Note } from '../models/Note';
 import { NoteService } from '../services/note-service';
+import { AuthService } from '../services/auth.service';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -51,7 +51,6 @@ import { RouterLink } from '@angular/router';
     IonGrid,
     IonRow,
     IonCol,
-    IonCheckbox,
     IonButton,
     IonIcon,
     IonFab,
@@ -66,8 +65,14 @@ export class NoteListPage implements OnInit {
   
   notes: Note[] = [];
   searchTerm: string = '';
+  openAccordions: string[] | string | undefined = undefined;
+  
+  // Posición del FAB
+  fabPosition = { x: 0, y: 0 };
+  private isDragging = false;
 
   noteService = inject(NoteService);
+  authService = inject(AuthService);
 
   constructor() {
     addIcons({ trashOutline, createOutline, eyeOutline, eyeOffOutline, add });
@@ -75,11 +80,17 @@ export class NoteListPage implements OnInit {
 
   ngOnInit() {
     this.xGuid = this.generateGUID();
+    // Posicionamos el botón más arriba por defecto
+    this.fabPosition.y = 300;
     console.log('x-guid:', this.xGuid);
   }
 
-  ionViewWillEnter() {
-    this.loadNotes();
+  async ionViewWillEnter() {
+    this.openAccordions = undefined; // Cierra todos los acordeones
+    const isAuth = await this.authService.ensureAuthorized();
+    if (isAuth) {
+      this.loadNotes();
+    }
   }
 
   async loadNotes() {
@@ -122,4 +133,32 @@ export class NoteListPage implements OnInit {
     });
   }
 
+  /** Inicia el arrastre */
+  onDragStart(event: any) {
+    this.isDragging = true;
+  }
+
+  /** Maneja el movimiento del dedo/mouse */
+  onDragMove(event: any) {
+    if (!this.isDragging) return;
+    
+    const touch = event.touches ? event.touches[0] : event;
+    
+    // Calculamos posición desde el borde inferior derecho
+    const x = window.innerWidth - touch.clientX - 28; 
+    const y = window.innerHeight - touch.clientY - 28;
+    
+    // Límites para que no se salga de la pantalla y no interfiera con gestos del sistema
+    this.fabPosition.x = Math.max(10, Math.min(window.innerWidth - 60, x));
+    this.fabPosition.y = Math.max(80, Math.min(window.innerHeight - 100, y));
+  }
+
+  /** Finaliza el arrastre */
+  onDragEnd() {
+    this.isDragging = false;
+  }
+
+  trackByNotes(index: number, note: Note): number {
+    return note.noteId;
+  }
 }

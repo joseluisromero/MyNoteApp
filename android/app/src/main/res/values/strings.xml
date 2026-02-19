@@ -2,6 +2,6 @@
 <resources>
     <string name="app_name">MyNoteApp</string>
     <string name="title_activity_main">MyNoteApp</string>
-    <string name="package_name">io.ionic.starter</string>
-    <string name="custom_url_scheme">io.ionic.starter</string>
+    <string name="package_name">com.jlromero.mynoteapp</string>
+    <string name="custom_url_scheme">com.jlromero.mynoteapp</string>
 </resources>

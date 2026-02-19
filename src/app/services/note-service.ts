@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Note } from '../models/Note';
 import { firstValueFrom } from 'rxjs';
 import { Storage } from '@ionic/storage-angular';
+import { SecurityService } from './security.service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,6 +11,7 @@ import { Storage } from '@ionic/storage-angular';
 export class NoteService {
   private httClient = inject(HttpClient);
   private storage = inject(Storage);
+  private securityService = inject(SecurityService);
   private _storage: Storage | null = null;
 
   /** Bandera para decidir dónde guardar las notas */
@@ -38,8 +40,12 @@ export class NoteService {
   /** Obtiene todas las notas enviando las cabeceras requeridas */
   async getAllNotesWithHeaders(xDevice: string, xUser: string, xGuid: string): Promise<Note[]> {
     if (this.useLocalStorage) {
-      console.log('📦 Obteniendo notas de Almacenamiento Local');
-      return (await this._storage?.get('notes')) || [];
+      console.log('📦 Obteniendo notas de Almacenamiento Local (Cifradas)');
+      const encryptedData = await this._storage?.get('notes');
+      if (!encryptedData) return [];
+      
+      const decryptedNotes = this.securityService.decrypt(encryptedData);
+      return decryptedNotes || [];
     }
 
     const headers = this.buildRequiredHeaders(xDevice, xUser, xGuid);
@@ -63,7 +69,8 @@ export class NoteService {
   /** Obtiene una nota por su ID */
   async getNoteById(noteId: number, xDevice: string, xUser: string, xGuid: string): Promise<Note> {
     if (this.useLocalStorage) {
-      const notes = (await this._storage?.get('notes')) || [];
+      const encryptedData = await this._storage?.get('notes');
+      const notes = encryptedData ? this.securityService.decrypt(encryptedData) : [];
       const note = notes.find((n: Note) => n.noteId === noteId);
       if (!note) throw new Error('Nota no encontrada');
       return note;
@@ -77,12 +84,16 @@ export class NoteService {
 
   async createNote(data: Note, xDevice: string, xUser: string, xGuid: string): Promise<Note> {
     if (this.useLocalStorage) {
-      console.log('📦 Guardando nota en Almacenamiento Local');
-      const notes = (await this._storage?.get('notes')) || [];
-      // Generamos un ID si no viene uno
+      console.log('📦 Guardando nota cifrada en Almacenamiento Local');
+      const encryptedData = await this._storage?.get('notes');
+      const notes = encryptedData ? this.securityService.decrypt(encryptedData) : [];
+      
       if (!data.noteId) data.noteId = Date.now();
       notes.push(data);
-      await this._storage?.set('notes', notes);
+      
+      // Ciframos todo el array antes de guardarlo
+      const encryptedNotes = this.securityService.encrypt(notes);
+      await this._storage?.set('notes', encryptedNotes);
       return data;
     }
 
@@ -102,11 +113,14 @@ export class NoteService {
   async updateNote(data: Note, xDevice: string, xUser: string, xGuid: string, xDeviceIp: string = '127.0.0.1'): Promise<Note> {
     if (this.useLocalStorage) {
       console.log('� Actualizando nota en Almacenamiento Local');
-      const notes = (await this._storage?.get('notes')) || [];
+      const encryptedData = await this._storage?.get('notes');
+      const notes = encryptedData ? this.securityService.decrypt(encryptedData) : [];
+      
       const index = notes.findIndex((n: Note) => n.noteId === data.noteId);
       if (index !== -1) {
         notes[index] = data;
-        await this._storage?.set('notes', notes);
+        const encryptedNotes = this.securityService.encrypt(notes);
+        await this._storage?.set('notes', encryptedNotes);
       }
       return data;
     }
@@ -121,9 +135,12 @@ export class NoteService {
   async deleteNote(noteId: number, xDevice: string, xUser: string, xGuid: string): Promise<void> {
     if (this.useLocalStorage) {
       console.log('� Eliminando nota de Almacenamiento Local');
-      let notes = (await this._storage?.get('notes')) || [];
+      const encryptedData = await this._storage?.get('notes');
+      let notes = encryptedData ? this.securityService.decrypt(encryptedData) : [];
+      
       notes = notes.filter((n: Note) => n.noteId !== noteId);
-      await this._storage?.set('notes', notes);
+      const encryptedNotes = this.securityService.encrypt(notes);
+      await this._storage?.set('notes', encryptedNotes);
       return;
     }
 

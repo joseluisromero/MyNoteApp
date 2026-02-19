@@ -19,8 +19,8 @@
     (ionInput)="searchTerm = $any($event).detail.value" class="search-bar">
   </ion-searchbar>
 
-  <ion-accordion-group [multiple]="true">
-    <ion-accordion *ngFor="let note of getFilteredNotes(); let i = index" [value]="'note-' + i">
+  <ion-accordion-group [multiple]="true" [value]="openAccordions">
+    <ion-accordion *ngFor="let note of getFilteredNotes(); trackBy: trackByNotes" [value]="note.noteId.toString()">
       <ion-item slot="header" color="light">
         <ion-label>
           <strong>{{ note.title }}</strong>
@@ -46,8 +46,6 @@
                 </ng-container>
               </ion-col>
               <ion-col size="3">
-                <ion-checkbox [checked]="detail.sensitive" disabled style="margin-right:8px"></ion-checkbox>
-
                 <ng-container *ngIf="detail.sensitive">
                   <ion-button fill="clear" size="small" (click)="detail.visible = !detail.visible">
                     <ion-icon slot="icon-only" [name]="detail.visible ? 'eye-outline' : 'eye-off-outline'"></ion-icon>
@@ -84,7 +82,9 @@
     </ion-accordion>
   </ion-accordion-group>
 
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed" style="margin-bottom: 60px">
+  <!-- Botón Flotante Draggable -->
+  <ion-fab slot="fixed" [style.bottom.px]="fabPosition.y || 80" [style.right.px]="fabPosition.x || 20"
+    (touchstart)="onDragStart($event)" (touchmove)="onDragMove($event)" (touchend)="onDragEnd()">
     <ion-fab-button [routerLink]="['/create-note']">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>

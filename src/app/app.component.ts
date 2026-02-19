@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   IonApp,
@@ -12,6 +12,7 @@ import {
   IonMenuToggle,
   IonRouterOutlet,
 } from '@ionic/angular/standalone';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -27,8 +28,14 @@ import {
     IonList,
     IonItem,
     IonMenuToggle,
-    IonRouterOutlet],
+    IonRouterOutlet,
+    CommonModule
+  ],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   constructor() {}
+
+  ngOnInit() {
+    console.log('🚀 App iniciada.');
+  }
 }

@@ -14,9 +14,25 @@
     </ion-toolbar>
   </ion-header>
 
-  <div class="welcome-container ion-margin-bottom">
-    <h1 class="ion-text-center">Hola, {{ userName }}! 👋</h1>
-    <p class="ion-text-center ion-text-muted">Bienvenido a tu gestor personal de notas.</p>
+  <div class="welcome-container ion-margin-bottom ion-text-center">
+    <ng-container *ngIf="!isEditingName">
+      <h1>Hola, {{ userName }}! 👋
+        <ion-button fill="clear" size="small" (click)="toggleEditName()">
+          <ion-icon slot="icon-only" name="pencil-outline"></ion-icon>
+        </ion-button>
+      </h1>
+    </ng-container>
+
+    <ng-container *ngIf="isEditingName">
+      <ion-item lines="none" class="name-editor-item">
+        <ion-input [(ngModel)]="userName" placeholder="Tu nombre" class="ion-text-center"></ion-input>
+        <ion-button fill="clear" slot="end" (click)="saveName()">
+          <ion-icon slot="icon-only" name="checkmark-circle-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ng-container>
+
+    <p class="ion-text-muted">Bienvenido a tu gestor personal de notas.</p>
   </div>
 
   <ion-card>

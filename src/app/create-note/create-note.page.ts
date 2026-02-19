@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {  FormsModule } from '@angular/forms';
 import {
@@ -22,6 +22,7 @@ import {
 import { addIcons } from 'ionicons';
 import { trash, addCircleOutline } from 'ionicons/icons';
 import { NoteService } from '../services/note-service';
+import { AuthService } from '../services/auth.service';
 import { Note } from '../models/Note';
 
 import { Router } from '@angular/router';
@@ -52,7 +53,8 @@ import { Router } from '@angular/router';
     IonCheckbox,
   ]
 })
-export class CreateNotePage {
+export class CreateNotePage implements OnInit {
+  private authService = inject(AuthService);
    note: Note = {
     noteId: 0,
     title: '',
@@ -64,8 +66,32 @@ export class CreateNotePage {
     addIcons({ trash, addCircleOutline });
   }
 
+  async ngOnInit() {
+  }
+
+  async ionViewWillEnter() {
+    this.resetNote();
+    await this.authService.ensureAuthorized();
+  }
+
+  resetNote() {
+    this.note = {
+      noteId: 0,
+      title: '',
+      details: [],
+      createdAt: new Date().toISOString(),
+    };
+  }
+
   async onSubmit() {
-    console.log('📤 Sending note:', this.note);
+    console.log('📤 Enviando nota:', this.note);
+
+    // Aseguramos que la clave maestra esté configurada/validada antes de guardar
+    const isAuth = await this.authService.ensureAuthorized();
+    if (!isAuth) {
+      console.warn('⚠️ Guardado cancelado: Usuario no autorizado.');
+      return;
+    }
 
     const guid = this.generateGUID();
     try {
@@ -73,7 +99,7 @@ export class CreateNotePage {
       this.router.navigate(['/note-list']);
     } catch (error) {
        console.error('Error creating note:', error);
-       alert('Error al crear la nota');
+       alert('Error al crear la nota: ' + error);
     }
   }
 
@@ -85,7 +111,11 @@ export class CreateNotePage {
     this.note.details.splice(index, 1);
   }
 
-  generateGUID() {
-    return crypto.randomUUID();
+  generateGUID(): string {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      const r = Math.random() * 16 | 0;
+      const v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
   }
 }

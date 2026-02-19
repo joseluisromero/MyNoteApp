@@ -24,6 +24,7 @@ import { NoteService } from '../services/note-service';
 import { Note } from '../models/Note';
 import { addIcons } from 'ionicons';
 import { trash, addCircleOutline, save } from 'ionicons/icons';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-update-note',
@@ -67,6 +68,7 @@ export class UpdateNotePage implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private noteService = inject(NoteService);
+  private authService = inject(AuthService);
 
   constructor() {
     addIcons({ trash, addCircleOutline, save });
@@ -74,14 +76,16 @@ export class UpdateNotePage implements OnInit {
 
   ngOnInit() {
     this.xGuid = this.generateGUID(); 
-    // Nota: Idealmente el GUID debería ser persistente o venir del login, 
-    // pero por ahora lo generamos o usamos uno fijo si es necesario.
-    // Para actualizar, los headers deben coincidir con lo esperado.
-    
+  }
+
+  async ionViewWillEnter() {
+    const isAuth = await this.authService.ensureAuthorized();
+    if (!isAuth) return;
+
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       const noteId = +idParam;
-      this.loadNote(noteId);
+      await this.loadNote(noteId);
     }
   }
 
