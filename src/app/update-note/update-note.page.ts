@@ -13,17 +13,17 @@ import {
   IonInput,
   IonButton,
   IonIcon,
-  IonCard,
-  IonCardHeader,
-  IonCardSubtitle,
-  IonCardContent,
+  IonFooter,
   IonCheckbox,
+  IonAccordion,
+  IonAccordionGroup,
+  IonTextarea,
 } from '@ionic/angular/standalone';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NoteService } from '../services/note-service';
 import { Note } from '../models/Note';
 import { addIcons } from 'ionicons';
-import { trash, addCircleOutline, save } from 'ionicons/icons';
+import { trash, addCircleOutline, save, lockClosedOutline } from 'ionicons/icons';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -45,11 +45,11 @@ import { AuthService } from '../services/auth.service';
     IonInput,
     IonButton,
     IonIcon,
-    IonCard,
-    IonCardHeader,
-    IonCardSubtitle,
-    IonCardContent,
+    IonFooter,
     IonCheckbox,
+    IonAccordion,
+    IonAccordionGroup,
+    IonTextarea,
   ]
 })
 export class UpdateNotePage implements OnInit {
@@ -71,7 +71,7 @@ export class UpdateNotePage implements OnInit {
   private authService = inject(AuthService);
 
   constructor() {
-    addIcons({ trash, addCircleOutline, save });
+    addIcons({ trash, addCircleOutline, save, lockClosedOutline });
   }
 
   ngOnInit() {

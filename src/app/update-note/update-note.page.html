@@ -3,70 +3,92 @@
         <ion-buttons slot="start">
             <ion-back-button defaultHref="/note-list"></ion-back-button>
         </ion-buttons>
-        <ion-title>Actualizar Nota</ion-title>
+        <ion-title>Editar Nota</ion-title>
     </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding">
-    <ion-header collapse="condense">
-        <ion-toolbar>
-            <ion-title size="large">Actualizar Nota</ion-title>
-        </ion-toolbar>
-    </ion-header>
+<ion-content [fullscreen]="true">
+    <div class="content-container ion-padding">
 
-    <form (ngSubmit)="onUpdate()" #noteForm="ngForm">
+        <form (ngSubmit)="onUpdate()" #noteForm="ngForm" style="flex: 1;">
 
-        <ion-item lines="full" class="ion-margin-bottom">
-            <ion-label position="stacked">Título</ion-label>
-            <ion-input name="title" [(ngModel)]="note.title" required placeholder="Ingrese el título de la nota"
-                maxlength="255" counter="true">
-            </ion-input>
-        </ion-item>
+            <!-- 1. Título Protagonista -->
+            <div class="title-container">
+                <ion-input class="title-input" name="title" [(ngModel)]="note.title" required
+                    placeholder="Título de la nota" maxlength="255" counter="true">
+                </ion-input>
+                <div class="title-underline"></div>
+            </div>
 
-        <div class="ion-d-flex ion-justify-content-between ion-align-items-center ion-padding-bottom">
-            <ion-label><strong>Detalles</strong></ion-label>
-            <ion-button size="small" fill="outline" (click)="addDetail()">
-                <ion-icon slot="start" name="add-circle-outline"></ion-icon>
-                {{ note.details.length > 0 ? 'Agregar Otro Detalle' : 'Agregar Detalle' }}
+            <!-- 2. Detalles con Estilo Premium (Acordeones) -->
+            <div class="details-header-container">
+                <ion-label color="medium" class="details-title">
+                    Detalles de la nota
+                </ion-label>
+                <ion-button fill="clear" size="small" (click)="addDetail()" class="add-button">
+                    <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+                    Añadir
+                </ion-button>
+            </div>
+
+            <ion-accordion-group [multiple]="true">
+                <ion-accordion *ngFor="let detail of note.details; let i = index" [value]="'detail' + i">
+                    <div slot="header" class="detail-summary">
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <span class="summary-label">Clave:</span>
+                                <span class="summary-value">{{ detail.key || '---' }}</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Valor:</span>
+                                <span class="summary-value">{{ detail.value ? (detail.sensitive ? '••••••••' :
+                                    detail.value) : '---' }}</span>
+                            </div>
+                        </div>
+                        <div class="sensitive-tag" *ngIf="detail.sensitive">
+                            <ion-icon name="lock-closed-outline"></ion-icon>
+                            <span>Sensible</span>
+                        </div>
+                    </div>
+
+                    <div slot="content" class="detail-content">
+                        <ion-item lines="none">
+                            <ion-label position="stacked">Clave</ion-label>
+                            <ion-input placeholder="Ej: Email, Usuario, Web..." name="key{{i}}" [(ngModel)]="detail.key"
+                                required maxlength="255">
+                            </ion-input>
+                        </ion-item>
+
+                        <ion-item lines="none">
+                            <ion-label position="stacked">Valor</ion-label>
+                            <ion-textarea placeholder="Ingrese el valor" name="value{{i}}" [(ngModel)]="detail.value"
+                                required [autoGrow]="true" rows="1">
+                            </ion-textarea>
+                        </ion-item>
+
+                        <div class="sensitive-container" (click)="detail.sensitive = !detail.sensitive">
+                            <ion-checkbox [checked]="detail.sensitive" name="sensitive{{i}}"></ion-checkbox>
+                            <ion-label>Es información sensible</ion-label>
+                        </div>
+
+                        <ion-button fill="clear" color="danger" size="small" (click)="removeDetail(i)"
+                            class="remove-button">
+                            <ion-icon slot="start" name="trash"></ion-icon>
+                            Eliminar este detalle
+                        </ion-button>
+                    </div>
+                </ion-accordion>
+            </ion-accordion-group>
+
+        </form>
+    </div>
+
+    <!-- 4. Botón Guardar Inteligente (Sticky Footer) -->
+    <ion-footer class="ion-no-border">
+        <div class="footer-container">
+            <ion-button (click)="onUpdate()" expand="block" color="primary" [disabled]="!note.title || !noteForm.valid">
+                Guardar Cambios
             </ion-button>
         </div>
-
-        <div *ngFor="let detail of note.details; let i = index">
-            <ion-card class="ion-margin-bottom">
-                <ion-card-header>
-                    <ion-card-subtitle>Detalle {{i + 1}}</ion-card-subtitle>
-                    <ion-button fill="clear" color="danger" size="small" (click)="removeDetail(i)"
-                        style="position: absolute; right: 0; top: 0;">
-                        <ion-icon slot="icon-only" name="trash"></ion-icon>
-                    </ion-button>
-                </ion-card-header>
-                <ion-card-content>
-                    <ion-item lines="none">
-                        <ion-label position="stacked">Clave</ion-label>
-                        <ion-input placeholder="Ej: Fecha" name="key{{i}}" [(ngModel)]="detail.key" required
-                            maxlength="255" counter="true">
-                        </ion-input>
-                    </ion-item>
-                    <ion-item lines="none">
-                        <ion-label position="stacked">Valor</ion-label>
-                        <ion-input placeholder="Ej: 2023-10-27" name="value{{i}}" [(ngModel)]="detail.value" required>
-                        </ion-input>
-                    </ion-item>
-                    <ion-item lines="none">
-                        <ion-checkbox slot="start" [(ngModel)]="detail.sensitive" name="sensitive{{i}}">
-                        </ion-checkbox>
-                        <ion-label>Sensitivo</ion-label>
-                    </ion-item>
-                </ion-card-content>
-            </ion-card>
-        </div>
-
-        <!-- Improved Add Detail Button -->
-        <ion-button type="submit" expand="block" color="primary" class="ion-margin-top ion-margin-bottom"
-            [disabled]="!noteForm.valid">
-            <ion-icon slot="start" name="save"></ion-icon>
-            Guardar Cambios
-        </ion-button>
-
-    </form>
+    </ion-footer>
 </ion-content>

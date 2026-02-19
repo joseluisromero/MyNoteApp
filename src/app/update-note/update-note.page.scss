@@ -1,0 +1,4 @@
+// Styles moved to global.scss to optimize bundle size and fix build budgets
+ion-fab-button {
+    --box-shadow: 0 4px 16px rgba(var(--ion-color-primary-rgb), 0.4);
+}
