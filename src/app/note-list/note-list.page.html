@@ -3,6 +3,11 @@
     <ion-buttons slot="start">
       <ion-menu-button menu="m1"></ion-menu-button>
     </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="downloadNotes()">
+        <ion-icon slot="icon-only" name="download-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
     <ion-title>Lista de Notas</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -14,73 +19,75 @@
     </ion-toolbar>
   </ion-header>
 
-  <!-- Barra de búsqueda/filtro -->
-  <ion-searchbar [(ngModel)]="searchTerm" placeholder="Buscar notas por título..."
-    (ionInput)="searchTerm = $any($event).detail.value" class="search-bar">
-  </ion-searchbar>
+  <!-- Barra de búsqueda premium -->
+  <div class="search-container">
+    <ion-searchbar [(ngModel)]="searchTerm" placeholder="Buscar notas..."
+      (ionInput)="searchTerm = $any($event).detail.value" class="custom-searchbar" mode="ios">
+    </ion-searchbar>
+  </div>
 
-  <ion-accordion-group [multiple]="true" [value]="openAccordions">
-    <ion-accordion *ngFor="let note of getFilteredNotes(); trackBy: trackByNotes" [value]="note.noteId.toString()">
-      <ion-item slot="header" color="light">
-        <ion-label>
-          <strong>{{ note.title }}</strong>
-          <p class="note-meta">ID: {{ note.noteId }} | Creado: {{ note.createdAt | date:'short' }}</p>
-        </ion-label>
-      </ion-item>
-      <div class="ion-padding" slot="content">
-        <div class="scroll-container">
-          <ion-grid class="details-grid">
-            <ion-row class="details-header">
-              <ion-col size="4">Clave</ion-col>
-              <ion-col size="5">Valor</ion-col>
-              <ion-col size="3">Sensitivo</ion-col>
-            </ion-row>
-            <ion-row *ngFor="let detail of note.details" class="details-row">
-              <ion-col size="4">{{ detail.key }}</ion-col>
-              <ion-col size="5">
-                <ng-container *ngIf="!detail.sensitive">
-                  {{ detail.value }}
-                </ng-container>
-                <ng-container *ngIf="detail.sensitive">
-                  {{ detail.visible ? detail.value : '••••••••' }}
-                </ng-container>
-              </ion-col>
-              <ion-col size="3">
-                <ng-container *ngIf="detail.sensitive">
-                  <ion-button fill="clear" size="small" (click)="detail.visible = !detail.visible">
-                    <ion-icon slot="icon-only" [name]="detail.visible ? 'eye-outline' : 'eye-off-outline'"></ion-icon>
-                  </ion-button>
-                </ng-container>
+  <div class="content-container">
+    <ion-accordion-group [multiple]="true" [value]="openAccordions">
+      <ion-accordion *ngFor="let note of getFilteredNotes(); trackBy: trackByNotes" [value]="note.noteId.toString()"
+        class="premium-accordion">
 
-                <ng-container *ngIf="!detail.sensitive">
-                  <ion-button fill="clear" size="small" disabled="true">
-                    <ion-icon slot="icon-only" name="eye-outline"></ion-icon>
-                  </ion-button>
-                </ng-container>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
+        <div slot="header" class="note-header">
+          <div class="title-section">
+            <h3 class="note-title">{{ note.title }}</h3>
+            <p class="note-date">{{ note.createdAt | date:'medium' }}</p>
+          </div>
+          <ion-icon name="chevron-down-outline" class="accordion-arrow"></ion-icon>
         </div>
 
-        <ion-grid>
-          <ion-row>
-            <ion-col size="6">
-              <ion-button expand="block" color="secondary" [routerLink]="['/update-note', note.noteId]">
-                <ion-icon slot="start" name="create-outline"></ion-icon>
-                Editar
-              </ion-button>
-            </ion-col>
-            <ion-col size="6">
-              <ion-button expand="block" color="danger" (click)="deleteNote(note.noteId)">
-                <ion-icon slot="start" name="trash-outline"></ion-icon>
-                Eliminar
-              </ion-button>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </div>
-    </ion-accordion>
-  </ion-accordion-group>
+        <div class="ion-padding content-slot" slot="content">
+          <!-- Detalles de la nota -->
+          <div class="note-details-list">
+            <div *ngFor="let detail of note.details" class="detail-item-row">
+              <div class="detail-main-content">
+                <div class="detail-label-row">
+                  <span class="detail-key">{{ detail.key }}</span>
+                </div>
+
+                <!-- Fila Inferior: Valor y Ojo (si es sensible) -->
+                <div class="detail-data-row">
+                  <span class="detail-value text-wrap">
+                    <ng-container *ngIf="!detail.sensitive">
+                      {{ detail.value }}
+                    </ng-container>
+                    <ng-container *ngIf="detail.sensitive">
+                      {{ detail.visible ? detail.value : '••••••••' }}
+                    </ng-container>
+                  </span>
+
+                  <div class="detail-actions" *ngIf="detail.sensitive">
+                    <ion-button fill="clear" size="small"
+                      (click)="$event.stopPropagation(); detail.visible = !detail.visible">
+                      <ion-icon slot="icon-only" [name]="detail.visible ? 'eye-outline' : 'eye-off-outline'"></ion-icon>
+                    </ion-button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botones de Acción -->
+          <div class="actions-grid">
+            <ion-button expand="block" color="secondary" fill="outline" class="action-btn"
+              [routerLink]="['/update-note', note.noteId]">
+              <ion-icon slot="start" name="create-outline"></ion-icon>
+              Editar
+            </ion-button>
+            <ion-button expand="block" color="danger" fill="outline" class="action-btn"
+              (click)="deleteNote(note.noteId)">
+              <ion-icon slot="start" name="trash-outline"></ion-icon>
+              Eliminar
+            </ion-button>
+          </div>
+        </div>
+
+      </ion-accordion>
+    </ion-accordion-group>
+  </div>
 
   <!-- Botón Flotante Draggable -->
   <ion-fab slot="fixed" [style.bottom.px]="fabPosition.y || 80" [style.right.px]="fabPosition.x || 20"

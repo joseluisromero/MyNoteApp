@@ -1,98 +1,170 @@
-:host {
-  display: block;
+.search-container {
+  padding: 16px 16px 0 16px;
+  background: var(--app-background);
 }
 
-.notes-table {
-  --ion-grid-padding: 0;
+.custom-searchbar {
+  --border-radius: 12px;
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 0;
 }
 
-.table-header {
-  background: var(--ion-color-light, #f7f8fa);
-  font-weight: 600;
-  border-bottom: 1px solid #e0e0e0;
-  padding: 8px 0;
+.content-container {
+  padding: 16px;
+  background: #f4f5f8; // Gris muy claro
+  min-height: 100%;
 }
 
-.table-row {
-  padding: 8px 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.scroll-container {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  /* Suaviza el scroll en iOS */
-  padding-bottom: 8px;
-  /* Espacio para el scrollbar */
-  margin-bottom: 16px;
-
-  /* Estilizar scrollbar para webkit */
-  &::-webkit-scrollbar {
-    height: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 4px;
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background: #bbb;
-  }
-}
-
-.details-grid {
-  min-width: 500px;
-  /* Ancho mínimo para forzar scroll en pantallas pequeñas */
+ion-accordion-group {
   background: transparent;
-  margin: 0;
 }
 
-.details-header {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--ion-color-dark);
-  background-color: var(--ion-color-light);
-  border-bottom: 2px solid var(--ion-color-medium-tint);
-  padding: 8px 0;
-  margin-bottom: 0;
+.premium-accordion {
+  margin-bottom: 16px;
+  background: #ffffff !important; // Card Blanco
+  border-radius: 16px !important;
+  border: 1px solid var(--app-border-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  &.accordion-expanding,
+  &.accordion-expanded {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    border-color: var(--ion-color-primary-tint);
+
+    .accordion-arrow {
+      transform: rotate(180deg);
+      color: var(--ion-color-primary);
+    }
+  }
+
+  &::part(header) {
+    background: transparent;
+    padding: 0;
+  }
 }
 
-.details-row {
-  border-bottom: 1px solid var(--ion-color-light-shade);
-  padding: 8px 0;
+.note-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  width: 100%;
+
+  .title-section {
+    flex: 1;
+
+
+    .note-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ion-text-color);
+    }
+
+    .note-date {
+      margin: 4px 0 0 0;
+      font-size: 12px;
+      color: #999999; // Fecha gris tenue
+    }
+  }
+
+  .accordion-arrow {
+    font-size: 20px;
+    color: var(--ion-color-medium);
+    transition: all 0.3s ease;
+  }
+}
+
+.content-slot {
+  padding-top: 0;
+}
+
+.note-details-list {
+  background: rgba(var(--ion-color-step-100-rgb), 0.3);
+  border-radius: 12px;
+  padding: 8px;
+  margin-bottom: 16px;
+}
+
+.detail-item-row {
+  padding: 12px 8px;
+  border-bottom: 1px solid rgba(var(--ion-color-step-200-rgb), 0.2);
 
   &:last-child {
     border-bottom: none;
   }
-}
 
-ion-col {
-  display: flex;
-  align-items: center;
-  word-break: break-word;
-  /* Evita desbordamiento de texto */
-  padding: 4px 8px;
+  .detail-main-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
 
-  /* Estilos específicos para checkboxes alineados */
-  ion-checkbox {
-    --size: 16px;
-    margin-right: 4px;
-    vertical-align: middle;
+  .detail-label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .detail-key {
+      font-size: 11px;
+      font-weight: 700;
+      color: #666666; // Clave gris medio
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+  }
+
+  .detail-data-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+
+    .detail-value {
+      font-size: 14px;
+      color: #000000; // Valor negro fuerte
+      font-weight: 600;
+      line-height: 1.4;
+      flex: 1;
+      word-break: break-all;
+      white-space: normal;
+    }
+
+    .detail-actions {
+      margin-top: -8px;
+
+      ion-button {
+        --color: #546e7a; // Icono sensible gris oscuro/azul suave
+        margin: 0;
+        --padding-start: 4px;
+        --padding-end: 4px;
+      }
+    }
   }
 }
 
-.search-bar {
-  margin: 8px 0;
+.actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+
+  .action-btn {
+    margin: 0;
+    --border-radius: 10px;
+    font-weight: 600;
+    height: 44px;
+  }
 }
 
-.note-meta {
-  font-size: 0.85rem;
-  color: var(--ion-color-medium);
-  margin: 4px 0 0 0;
+// Estilos del FAB (manteniendo tu funcionalidad de arrastre)
+ion-fab {
+  transition: none; // Evita lag al arrastrar
+
+  ion-fab-button {
+    --box-shadow: 0 4px 16px rgba(var(--ion-color-primary-rgb), 0.4);
+  }
 }

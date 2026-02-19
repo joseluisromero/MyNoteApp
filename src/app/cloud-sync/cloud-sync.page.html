@@ -1,0 +1,60 @@
+<ion-header [translucent]="true">
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-button menu="m1"></ion-menu-button>
+        </ion-buttons>
+        <ion-title>Sincronización Nube</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+    <div class="sync-wrapper content-container">
+
+        <div class="hero-section">
+            <div class="icon-circle">
+                <ion-icon name="cloud-upload-outline" color="primary"></ion-icon>
+            </div>
+            <h2>Respalda tus notas</h2>
+            <p>Envía una copia de seguridad de todas tus notas directamente a tu correo electrónico.</p>
+        </div>
+
+        <ion-card mode="ios" class="sync-card">
+            <ion-card-header>
+                <ion-card-title>Configuración de envío</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+                <ion-item lines="none" class="input-item">
+                    <ion-icon name="mail-outline" slot="start" color="medium"></ion-icon>
+                    <ion-label position="stacked">Correo Electrónico</ion-label>
+                    <ion-input type="email" [(ngModel)]="email" placeholder="ejemplo@correo.com" [disabled]="isSyncing">
+                    </ion-input>
+                </ion-item>
+
+                <div class="status-box" *ngIf="syncStatus !== 'idle'" [class]="syncStatus">
+                    <ion-icon
+                        [name]="syncStatus === 'success' ? 'checkmark-circle-outline' : 'alert-circle-outline'"></ion-icon>
+                    <p>{{ statusMessage }}</p>
+                </div>
+            </ion-card-content>
+        </ion-card>
+
+        <div class="info-box">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            <p>Se enviarán todas las notas guardadas, incluyendo los detalles marcados como sensibles (requerirá tu
+                contraseña maestra).</p>
+        </div>
+
+    </div>
+
+    <ion-footer class="ion-no-border">
+        <div class="footer-container">
+            <div class="maintenance-notice">
+                <ion-icon name="construct-outline"></ion-icon>
+                <p>Esta función estará disponible próximamente al configurar el servidor seguro.</p>
+            </div>
+            <ion-button expand="block" (click)="onSync()" [disabled]="true">
+                <span>Sincronizar ahora</span>
+            </ion-button>
+        </div>
+    </ion-footer>
+</ion-content>

@@ -149,4 +149,25 @@ export class NoteService {
       this.httClient.delete<void>(this.API_URL_BASE + `/api/notes/${noteId}`, { headers })
     );
   }
+
+  /** Envia todas las notas al correo proporcionado */
+  async syncNotesToEmail(email: string, notes: Note[], xDevice: string, xUser: string, xGuid: string): Promise<any> {
+    const headers = this.buildRequiredHeaders(xDevice, xUser, xGuid);
+    const body = {
+      email: email,
+      notes: notes
+    };
+
+    console.log(`☁️ Enviando ${notes.length} notas al servidor para el correo: ${email}`);
+    
+    return firstValueFrom(
+      this.httClient.post(this.API_URL_BASE + '/api/notes/sync-email', body, { headers })
+    ).then(response => {
+      console.log('✅ Sincronización enviada con éxito');
+      return response;
+    }).catch(error => {
+      console.error('❌ Error al sincronizar con el correo:', error);
+      throw error;
+    });
+  }
 }

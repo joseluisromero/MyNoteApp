@@ -8,9 +8,22 @@
     <ion-content>
       <ion-list>
         <ion-menu-toggle>
-          <ion-item button [routerLink]="['']">Inicio</ion-item>
-          <ion-item button [routerLink]="['/note-list']">Lista Notas</ion-item>
-          <ion-item button [routerLink]="['/create-note']">Crear Nota</ion-item>
+          <ion-item button [routerLink]="['']" lines="none" class="menu-item">
+            <ion-icon slot="start" name="home-outline"></ion-icon>
+            <ion-label>Inicio</ion-label>
+          </ion-item>
+          <ion-item button [routerLink]="['/note-list']" lines="none" class="menu-item">
+            <ion-icon slot="start" name="list-outline"></ion-icon>
+            <ion-label>Lista Notas</ion-label>
+          </ion-item>
+          <ion-item button [routerLink]="['/create-note']" lines="none" class="menu-item">
+            <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+            <ion-label>Crear Nota</ion-label>
+          </ion-item>
+          <ion-item button [routerLink]="['/cloud-sync']" lines="none" class="menu-item">
+            <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
+            <ion-label>Sincronización Nube</ion-label>
+          </ion-item>
         </ion-menu-toggle>
       </ion-list>
     </ion-content>

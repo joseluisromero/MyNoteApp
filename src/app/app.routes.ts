@@ -19,6 +19,10 @@ export const routes: Routes = [
   {
     path: 'security-auth',
     loadComponent: () => import('./security-auth.page')
+  },
+  {
+    path: 'cloud-sync',
+    loadComponent: () => import('./cloud-sync/cloud-sync.page').then( m => m.CloudSyncPage)
   }
 
 ];

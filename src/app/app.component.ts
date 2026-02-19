@@ -11,8 +11,12 @@ import {
   IonItem,
   IonMenuToggle,
   IonRouterOutlet,
+  IonIcon,
+  IonLabel,
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
+import { addIcons } from 'ionicons';
+import { homeOutline, listOutline, addCircleOutline, cloudUploadOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-root',
@@ -29,11 +33,15 @@ import { CommonModule } from '@angular/common';
     IonItem,
     IonMenuToggle,
     IonRouterOutlet,
+    IonIcon,
+    IonLabel,
     CommonModule
   ],
 })
 export class AppComponent implements OnInit {
-  constructor() {}
+  constructor() {
+    addIcons({ homeOutline, listOutline, addCircleOutline, cloudUploadOutline });
+  }
 
   ngOnInit() {
     console.log('🚀 App iniciada.');

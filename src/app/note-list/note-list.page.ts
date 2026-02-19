@@ -22,7 +22,7 @@ import {
   IonFabButton,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { trashOutline, createOutline, eyeOutline, eyeOffOutline, add } from 'ionicons/icons';
+import { trashOutline, createOutline, eyeOutline, eyeOffOutline, add, downloadOutline } from 'ionicons/icons';
 import { Note } from '../models/Note';
 import { NoteService } from '../services/note-service';
 import { AuthService } from '../services/auth.service';
@@ -75,7 +75,7 @@ export class NoteListPage implements OnInit {
   authService = inject(AuthService);
 
   constructor() {
-    addIcons({ trashOutline, createOutline, eyeOutline, eyeOffOutline, add });
+    addIcons({ trashOutline, createOutline, eyeOutline, eyeOffOutline, add, downloadOutline });
   }
 
   ngOnInit() {
@@ -160,5 +160,35 @@ export class NoteListPage implements OnInit {
 
   trackByNotes(index: number, note: Note): number {
     return note.noteId;
+  }
+
+  async downloadNotes() {
+    if (this.notes.length === 0) {
+      alert('No hay notas para descargar.');
+      return;
+    }
+
+    try {
+      // Pedir autorización si hay notas sensibles
+      const isAuth = await this.authService.ensureAuthorized();
+      if (!isAuth) return;
+
+      // Generar el contenido del archivo (JSON formateado)
+      const dataStr = JSON.stringify(this.notes, null, 2);
+      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+      
+      const exportFileDefaultName = `Respaldo_Notas_${new Date().toISOString().slice(0,10)}.json`;
+      
+      // Crear un elemento link temporal para disparar la descarga
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+      
+      console.log('✅ Notas descargadas con éxito');
+    } catch (error) {
+      console.error('Error al descargar:', error);
+      alert('Error al generar la descarga');
+    }
   }
 }
