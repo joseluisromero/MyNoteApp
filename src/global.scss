@@ -18,6 +18,15 @@
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
 
+/* Global Toolbar Styles */
+ion-toolbar {
+    --background: #4285F4;
+    /* Azul Google */
+    --color: #ffffff;
+    --border-style: none;
+    /* Sin borde inferior */
+}
+
 /* Optional CSS utils that can be commented out */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";

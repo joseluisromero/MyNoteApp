@@ -1,4 +1,4 @@
-<ion-header [translucent]="true">
+<ion-header>
     <ion-toolbar>
         <ion-buttons slot="start">
             <ion-back-button defaultHref="/note-list"></ion-back-button>
@@ -27,7 +27,7 @@
                 </ion-label>
                 <ion-button fill="clear" size="small" (click)="addDetail()" class="add-button">
                     <ion-icon slot="start" name="add-circle-outline"></ion-icon>
-                    Añadir
+                    Añadir detalle
                 </ion-button>
             </div>
 
@@ -68,13 +68,13 @@
 
                         <div class="sensitive-container" (click)="detail.sensitive = !detail.sensitive">
                             <ion-checkbox [checked]="detail.sensitive" name="sensitive{{i}}"></ion-checkbox>
-                            <ion-label>Es información sensible</ion-label>
+                            <ion-label>Sensible</ion-label>
                         </div>
 
                         <ion-button fill="clear" color="danger" size="small" (click)="removeDetail(i)"
                             class="remove-button">
                             <ion-icon slot="start" name="trash"></ion-icon>
-                            Eliminar este detalle
+                            Eliminar detalle
                         </ion-button>
                     </div>
                 </ion-accordion>

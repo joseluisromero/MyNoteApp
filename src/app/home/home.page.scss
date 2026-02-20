@@ -25,3 +25,20 @@
 #container a {
   text-decoration: none;
 }
+
+// Forzar color del header en Home
+ion-toolbar {
+  --background: #4285F4;
+  /* Azul Google */
+  --color: #ffffff;
+  --border-style: none;
+  /* Sin borde inferior */
+}
+
+// Asegurar que el título grande también use el color correcto si ionic lo permite, aunque a veces el condense header toma el fondo del content.
+ion-header[collapse="condense"] ion-toolbar {
+  --background: #F8FAFC; // El header condensado suele ser transparente o del color de fondo hasta que scrollea
+  --color: #0F172A; // Texto oscuro cuando está grande
+}
+
+// Al hacer scroll y volverse sticky, usará el estilo normal de ion-toolbar (Azul).

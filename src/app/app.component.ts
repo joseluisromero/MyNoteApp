@@ -13,14 +13,16 @@ import {
   IonRouterOutlet,
   IonIcon,
   IonLabel,
+  IonFooter,
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
-import { homeOutline, listOutline, addCircleOutline, cloudUploadOutline } from 'ionicons/icons';
+import { homeOutline, listOutline, addCircleOutline, cloudUploadOutline, codeSlashOutline, mailOutline, logoGithub, logoLinkedin, logoWhatsapp } from 'ionicons/icons';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
+  styleUrls: ['app.component.scss'],
   imports: [
     RouterLink,
     IonApp,
@@ -35,12 +37,14 @@ import { homeOutline, listOutline, addCircleOutline, cloudUploadOutline } from '
     IonRouterOutlet,
     IonIcon,
     IonLabel,
+    IonFooter,
     CommonModule
   ],
 })
 export class AppComponent implements OnInit {
+
   constructor() {
-    addIcons({ homeOutline, listOutline, addCircleOutline, cloudUploadOutline });
+    addIcons({ homeOutline, listOutline, addCircleOutline, cloudUploadOutline, codeSlashOutline, mailOutline, logoGithub, logoLinkedin, logoWhatsapp });
   }
 
   ngOnInit() {

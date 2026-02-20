@@ -11,7 +11,7 @@
 
 .content-container {
   padding: 16px;
-  background: #f4f5f8; // Gris muy claro
+  background: #ffffff; // Fondo blanco según imagen
   min-height: 100%;
 }
 
@@ -20,18 +20,22 @@ ion-accordion-group {
 }
 
 .premium-accordion {
-  margin-bottom: 16px;
-  background: #ffffff !important; // Card Blanco
-  border-radius: 16px !important;
-  border: 1px solid var(--app-border-color);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-  transition: all 0.3s ease;
+  margin-bottom: 0; // Pegados como lista
+  background: #ffffff !important;
+  border-radius: 0 !important; // Cuadrados
+  border: none;
+  border-bottom: 1px solid #e0e0e0; // Línea separadora
+  box-shadow: none; // Sin sombra
+  transition: background-color 0.2s ease;
 
   &.accordion-expanding,
   &.accordion-expanded {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    border-color: var(--ion-color-primary-tint);
+    background-color: #f9f9f9 !important;
+    box-shadow: none;
+    border-color: #e0e0e0;
+
+    // Mantener borde inferior
+    border-bottom: 1px solid #e0e0e0;
 
     .accordion-arrow {
       transform: rotate(180deg);
@@ -60,20 +64,36 @@ ion-accordion-group {
       margin: 0;
       font-size: 18px;
       font-weight: 700;
-      color: var(--ion-text-color);
+      color: #0F172A; // Texto principal
+      user-select: text;
+      -webkit-user-select: text;
     }
 
     .note-date {
       margin: 4px 0 0 0;
       font-size: 12px;
-      color: #999999; // Fecha gris tenue
+      color: #64748B; // Texto secundario (fecha)
     }
   }
 
-  .accordion-arrow {
-    font-size: 20px;
-    color: var(--ion-color-medium);
-    transition: all 0.3s ease;
+  .header-actions {
+    display: flex;
+    align-items: center;
+
+    ion-button {
+      margin: 0;
+      height: 32px;
+      width: 32px;
+      --padding-start: 0;
+      --padding-end: 0;
+    }
+
+    .accordion-arrow {
+      font-size: 20px;
+      color: #334155; // Color principal acciones
+      transition: all 0.3s ease;
+      margin-left: 4px;
+    }
   }
 }
 
@@ -111,7 +131,7 @@ ion-accordion-group {
     .detail-key {
       font-size: 11px;
       font-weight: 700;
-      color: #666666; // Clave gris medio
+      color: #334155; // Clave usando color principal/acciones
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -126,19 +146,22 @@ ion-accordion-group {
 
     .detail-value {
       font-size: 14px;
-      color: #000000; // Valor negro fuerte
+      color: #0F172A; // Valor negro fuerte (texto principal)
       font-weight: 600;
       line-height: 1.4;
       flex: 1;
       word-break: break-all;
       white-space: normal;
+      user-select: text;
+      -webkit-user-select: text;
     }
 
     .detail-actions {
       margin-top: -8px;
 
       ion-button {
-        --color: #546e7a; // Icono sensible gris oscuro/azul suave
+        --color: #EF4444; // Indicador sensible discreto (rojo)
+        opacity: 0.8;
         margin: 0;
         --padding-start: 4px;
         --padding-end: 4px;
@@ -165,6 +188,8 @@ ion-fab {
   transition: none; // Evita lag al arrastrar
 
   ion-fab-button {
-    --box-shadow: 0 4px 16px rgba(var(--ion-color-primary-rgb), 0.4);
+    --background: #1A237E; // Azul oscuro profundo (FAB)
+    --color: #FFD740; // Icono Amarillo/Dorado
+    --box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   }
 }

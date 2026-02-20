@@ -2,22 +2,25 @@ ion-menu {
     --width: 280px;
 }
 
-ion-header {
+.menu-header {
     ion-toolbar {
-        --background: var(--ion-color-primary);
+        --background: #4285F4; // Azul Google (mismo que el resto de la app)
         --color: white;
+        --border-style: none;
 
         ion-title {
-            font-weight: 800;
+            font-weight: 600;
             letter-spacing: 0.5px;
-            text-transform: uppercase;
-            font-size: 14px;
+            font-size: 18px;
+            text-align: left;
+            padding-inline-start: 16px;
         }
     }
 }
 
-ion-content {
-    --background: var(--app-background, #fff);
+.menu-content {
+    --background: #333333 !important; // Fondo oscuro para el menú
+    --color: #ffffff !important; // Texto blanco
 }
 
 ion-list {
@@ -28,34 +31,71 @@ ion-list {
 .menu-item {
     --background: transparent;
     --padding-start: 16px;
-    --border-radius: 12px;
-    margin: 4px 12px;
+    --border-radius: 4px;
+    margin: 4px 0;
     height: 50px;
     transition: all 0.2s ease;
 
+    // Forzar colores del texto e icono
+    color: #ffffff !important;
+    --color: #ffffff !important;
+
     ion-icon {
-        color: var(--ion-color-primary);
-        font-size: 22px;
+        color: #cccccc !important;
+        font-size: 24px;
         margin-right: 16px;
     }
 
     ion-label {
-        font-weight: 600;
+        font-weight: 500;
         font-size: 15px;
-        color: var(--ion-text-color);
+        color: #ffffff !important;
     }
 
     &.item-activated {
-        --background: rgba(var(--ion-color-primary-rgb), 0.1);
+        --background: #444444; // Fondo gris un poco más claro
+
+        ion-icon {
+            color: #ffffff !important;
+        }
 
         ion-label {
-            color: var(--ion-color-primary);
+            font-weight: 700;
         }
     }
 }
 
-@media (prefers-color-scheme: dark) {
-    ion-content {
-        --background: #121212;
+.menu-footer {
+    ion-toolbar {
+        --background: #2a2a2a; // Fondo ligeramente más oscuro que el contenido
+        --border-style: none;
+        padding: 0 16px 16px 16px;
+    }
+
+    .footer-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        opacity: 0.7;
+
+        .copyright {
+            margin: 0;
+            font-size: 12px;
+            color: #aaaaaa;
+        }
+
+        .developer-info {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #ffffff;
+
+            ion-icon {
+                font-size: 14px;
+                color: var(--ion-color-primary, #4285F4);
+            }
+        }
     }
 }

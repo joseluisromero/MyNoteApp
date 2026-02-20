@@ -18,7 +18,6 @@ import {
   IonCardTitle,
   IonCardContent,
   IonFooter,
-  IonSpinner
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { cloudUploadOutline, mailOutline, checkmarkCircleOutline, alertCircleOutline, constructOutline } from 'ionicons/icons';
@@ -49,7 +48,6 @@ import { AuthService } from '../services/auth.service';
     IonCardTitle,
     IonCardContent,
     IonFooter,
-    IonSpinner
   ]
 })
 export class CloudSyncPage {

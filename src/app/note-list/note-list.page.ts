@@ -13,16 +13,17 @@ import {
   IonAccordion,
   IonItem,
   IonLabel,
-  IonGrid,
-  IonRow,
-  IonCol,
   IonButton,
   IonIcon,
   IonFab,
   IonFabButton,
+  IonPopover,
+  IonList,
+  Platform,
 } from '@ionic/angular/standalone';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { addIcons } from 'ionicons';
-import { trashOutline, createOutline, eyeOutline, eyeOffOutline, add, downloadOutline } from 'ionicons/icons';
+import { trashOutline, createOutline, eyeOutline, eyeOffOutline, add, downloadOutline, ellipsisVertical } from 'ionicons/icons';
 import { Note } from '../models/Note';
 import { NoteService } from '../services/note-service';
 import { AuthService } from '../services/auth.service';
@@ -48,13 +49,12 @@ import { RouterLink } from '@angular/router';
     IonAccordion,
     IonItem,
     IonLabel,
-    IonGrid,
-    IonRow,
-    IonCol,
     IonButton,
     IonIcon,
     IonFab,
     IonFabButton,
+    IonPopover,
+    IonList,
   ]
 })
 export class NoteListPage implements OnInit {
@@ -73,9 +73,10 @@ export class NoteListPage implements OnInit {
 
   noteService = inject(NoteService);
   authService = inject(AuthService);
+  private platform = inject(Platform);
 
   constructor() {
-    addIcons({ trashOutline, createOutline, eyeOutline, eyeOffOutline, add, downloadOutline });
+    addIcons({ trashOutline, createOutline, eyeOutline, eyeOffOutline, add, downloadOutline, ellipsisVertical });
   }
 
   ngOnInit() {
@@ -108,10 +109,17 @@ export class NoteListPage implements OnInit {
       await this.noteService.deleteNote(noteId, this.xDevice, this.xUser, this.xGuid);
       // Actualizar la lista localmente o recargar
       this.notes = this.notes.filter(n => n.noteId !== noteId);
+      
+      // Cerrar acordeones si es necesario (opcional)
+      this.openAccordions = undefined;
     } catch (error) {
       console.error('Error deleting note:', error);
       alert('Error al eliminar la nota');
     }
+  }
+
+  closePopover(popover: any) {
+    popover.dismiss();
   }
 
   /** Filtra notas por título según el término de búsqueda */
@@ -173,19 +181,35 @@ export class NoteListPage implements OnInit {
       const isAuth = await this.authService.ensureAuthorized();
       if (!isAuth) return;
 
-      // Generar el contenido del archivo (JSON formateado)
       const dataStr = JSON.stringify(this.notes, null, 2);
-      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-      
       const exportFileDefaultName = `Respaldo_Notas_${new Date().toISOString().slice(0,10)}.json`;
-      
-      // Crear un elemento link temporal para disparar la descarga
-      const linkElement = document.createElement('a');
-      linkElement.setAttribute('href', dataUri);
-      linkElement.setAttribute('download', exportFileDefaultName);
-      linkElement.click();
-      
-      console.log('✅ Notas descargadas con éxito');
+
+      if (this.platform.is('hybrid')) {
+        // Lógica para Android/iOS usando Capacitor Filesystem
+        try {
+          const result = await Filesystem.writeFile({
+            path: exportFileDefaultName,
+            data: dataStr,
+            directory: Directory.Documents,
+            encoding: Encoding.UTF8
+          });
+
+          alert(`Archivo guardado exitosamente en Documentos:\n${result.uri}`);
+        } catch (e) {
+          console.error('Error guardando archivo nativo:', e);
+          alert('Error al guardar el archivo en el dispositivo.');
+        }
+      } else {
+        // Lógica para Navegador Web
+        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+        
+        const linkElement = document.createElement('a');
+        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', exportFileDefaultName);
+        linkElement.click();
+        
+        console.log('✅ Notas descargadas con éxito (Web)');
+      }
     } catch (error) {
       console.error('Error al descargar:', error);
       alert('Error al generar la descarga');

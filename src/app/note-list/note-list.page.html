@@ -1,4 +1,4 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-menu-button menu="m1"></ion-menu-button>
@@ -36,7 +36,31 @@
             <h3 class="note-title">{{ note.title }}</h3>
             <p class="note-date">{{ note.createdAt | date:'medium' }}</p>
           </div>
-          <ion-icon name="chevron-down-outline" class="accordion-arrow"></ion-icon>
+
+          <div class="header-actions">
+            <ion-button fill="clear" color="medium" id="popover-button-{{note.noteId}}"
+              (click)="$event.stopPropagation()">
+              <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+            </ion-button>
+            <ion-popover trigger="popover-button-{{note.noteId}}" dismissOnSelect="true">
+              <ng-template>
+                <ion-content class="ion-no-padding">
+                  <ion-list lines="none">
+                    <ion-item button [routerLink]="['/update-note', note.noteId]">
+                      <ion-icon slot="start" name="create-outline" color="secondary"></ion-icon>
+                      <ion-label>Editar</ion-label>
+                    </ion-item>
+                    <ion-item button (click)="deleteNote(note.noteId)" lines="none">
+                      <ion-icon slot="start" name="trash-outline" color="danger"></ion-icon>
+                      <ion-label color="danger">Eliminar</ion-label>
+                    </ion-item>
+                  </ion-list>
+                </ion-content>
+              </ng-template>
+            </ion-popover>
+
+            <ion-icon name="chevron-down-outline" class="accordion-arrow"></ion-icon>
+          </div>
         </div>
 
         <div class="ion-padding content-slot" slot="content">
@@ -71,18 +95,6 @@
           </div>
 
           <!-- Botones de Acción -->
-          <div class="actions-grid">
-            <ion-button expand="block" color="secondary" fill="outline" class="action-btn"
-              [routerLink]="['/update-note', note.noteId]">
-              <ion-icon slot="start" name="create-outline"></ion-icon>
-              Editar
-            </ion-button>
-            <ion-button expand="block" color="danger" fill="outline" class="action-btn"
-              (click)="deleteNote(note.noteId)">
-              <ion-icon slot="start" name="trash-outline"></ion-icon>
-              Eliminar
-            </ion-button>
-          </div>
         </div>
 
       </ion-accordion>
