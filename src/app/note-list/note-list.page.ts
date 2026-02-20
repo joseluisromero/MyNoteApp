@@ -183,18 +183,29 @@ async downloadNotes() {
 
     const dataStr = JSON.stringify(this.notes, null, 2);
     const now = new Date();
-    const formattedDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+    const formattedDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}-${String(now.getSeconds()).padStart(2, '0')}`;
     const exportFileDefaultName = `Respaldo_Secure_Notes_${formattedDate}.json`;
     const exportDir = 'SecureNotesBackups';
     if (this.platform.is('hybrid')) {
       // Lógica para Android/iOS usando Capacitor Filesystem
       try {
-        // Crear carpeta de exportacion dentro de Documents si no existe
-        await Filesystem.mkdir({
-          path: exportDir,
-          directory: Directory.Documents,
-          recursive: true
+        // Verificar si la carpeta existe en Documents antes de crearla
+        const documentsEntries = await Filesystem.readdir({
+          path: '',
+          directory: Directory.Documents
         });
+
+        const folderExists = documentsEntries.files.some(
+          (entry) => (typeof entry === 'string' ? entry : entry.name) === exportDir
+        );
+
+        if (!folderExists) {
+          await Filesystem.mkdir({
+            path: exportDir,
+            directory: Directory.Documents,
+            recursive: true
+          });
+        }
 
         const result = await Filesystem.writeFile({
           path: `${exportDir}/${exportFileDefaultName}`,
