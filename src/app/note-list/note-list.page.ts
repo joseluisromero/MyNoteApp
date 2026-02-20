@@ -170,49 +170,58 @@ export class NoteListPage implements OnInit {
     return note.noteId;
   }
 
-  async downloadNotes() {
-    if (this.notes.length === 0) {
-      alert('No hay notas para descargar.');
-      return;
-    }
-
-    try {
-      // Pedir autorización si hay notas sensibles
-      const isAuth = await this.authService.ensureAuthorized();
-      if (!isAuth) return;
-
-      const dataStr = JSON.stringify(this.notes, null, 2);
-      const exportFileDefaultName = `Respaldo_Notas_${new Date().toISOString().slice(0,10)}.json`;
-
-      if (this.platform.is('hybrid')) {
-        // Lógica para Android/iOS usando Capacitor Filesystem
-        try {
-          const result = await Filesystem.writeFile({
-            path: exportFileDefaultName,
-            data: dataStr,
-            directory: Directory.Documents,
-            encoding: Encoding.UTF8
-          });
-
-          alert(`Archivo guardado exitosamente en Documentos:\n${result.uri}`);
-        } catch (e) {
-          console.error('Error guardando archivo nativo:', e);
-          alert('Error al guardar el archivo en el dispositivo.');
-        }
-      } else {
-        // Lógica para Navegador Web
-        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-        
-        const linkElement = document.createElement('a');
-        linkElement.setAttribute('href', dataUri);
-        linkElement.setAttribute('download', exportFileDefaultName);
-        linkElement.click();
-        
-        console.log('✅ Notas descargadas con éxito (Web)');
-      }
-    } catch (error) {
-      console.error('Error al descargar:', error);
-      alert('Error al generar la descarga');
-    }
+async downloadNotes() {
+  if (this.notes.length === 0) {
+    alert('No hay notas para descargar.');
+    return;
   }
+
+  try {
+    // Pedir autorización si hay notas sensibles
+    const isAuth = await this.authService.ensureAuthorized();
+    if (!isAuth) return;
+
+    const dataStr = JSON.stringify(this.notes, null, 2);
+    const now = new Date();
+    const formattedDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+    const exportFileDefaultName = `Respaldo_Secure_Notes_${formattedDate}.json`;
+    const exportDir = 'SecureNotesBackups';
+    if (this.platform.is('hybrid')) {
+      // Lógica para Android/iOS usando Capacitor Filesystem
+      try {
+        // Crear carpeta de exportacion dentro de Documents si no existe
+        await Filesystem.mkdir({
+          path: exportDir,
+          directory: Directory.Documents,
+          recursive: true
+        });
+
+        const result = await Filesystem.writeFile({
+          path: `${exportDir}/${exportFileDefaultName}`,
+          data: dataStr,
+          directory: Directory.Documents,
+          encoding: Encoding.UTF8
+        });
+
+        alert(`Archivo guardado exitosamente en Documentos/${exportDir}:\n${result.uri}`);
+      } catch (e) {
+        console.error('Error guardando archivo nativo:', e);
+        alert('Error al guardar el archivo en el dispositivo.');
+      }
+    } else {
+      // Lógica para Navegador Web
+      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+      
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+      
+      console.log('✅ Notas descargadas con éxito (Web)');
+    }
+  } catch (error) {
+    console.error('Error al descargar:', error);
+    alert('Error al generar la descarga');
+  }
+}
 }
