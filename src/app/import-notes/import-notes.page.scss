@@ -1,0 +1,93 @@
+.content-container {
+  padding: 16px;
+}
+
+ion-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.subtitle {
+  margin: 0 0 12px 0;
+  color: var(--ion-color-medium);
+}
+
+#json-file-input {
+  display: none;
+}
+
+.file-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(var(--ion-color-primary-rgb), 0.08);
+  color: var(--ion-color-primary);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.status-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+}
+
+.status-box.success {
+  background: rgba(var(--ion-color-success-rgb), 0.12);
+  color: var(--ion-color-success-shade);
+}
+
+.status-box.error {
+  background: rgba(var(--ion-color-danger-rgb), 0.12);
+  color: var(--ion-color-danger-shade);
+}
+
+.sync-btn {
+  margin-top: 14px;
+}
+
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.note-card {
+  border: 1px solid rgba(var(--ion-color-primary-rgb), 0.2);
+  background: rgba(var(--ion-color-primary-rgb), 0.06);
+  border-radius: 10px;
+  padding: 8px 10px;
+  min-height: 44px;
+}
+
+.note-title {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+.skipped-card {
+  border-color: rgba(var(--ion-color-warning-rgb), 0.35);
+  background: rgba(var(--ion-color-warning-rgb), 0.1);
+}
+
+.note-reason {
+  margin: 6px 0 0 0;
+  font-size: 12px;
+  color: var(--ion-color-medium);
+}
+
+@media (max-width: 380px) {
+  .notes-grid {
+    grid-template-columns: 1fr;
+  }
+}

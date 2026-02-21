@@ -102,6 +102,26 @@ export class UpdateNotePage implements OnInit {
   async onUpdate() {
     console.log('📤 Updating note:', this.note);
     try {
+      const isAuth = await this.authService.ensureAuthorized();
+      if (!isAuth) return;
+
+      const normalizedTitle = this.note.title.trim().toLowerCase();
+      if (!normalizedTitle) {
+        alert('El titulo es obligatorio.');
+        return;
+      }
+
+      const currentNotes = await this.noteService.getAllNotesWithHeaders(this.xDevice, this.xUser, this.xGuid);
+      const duplicatedTitle = currentNotes.some(
+        (item) => item.noteId !== this.note.noteId && item.title.trim().toLowerCase() === normalizedTitle
+      );
+
+      if (duplicatedTitle) {
+        alert('Ya existe una nota con ese titulo. Usa un titulo diferente.');
+        return;
+      }
+
+      this.note.title = this.note.title.trim();
       await this.noteService.updateNote(this.note, this.xDevice, this.xUser, this.xGuid, this.xDeviceIp);
       this.router.navigate(['/note-list']);
     } catch (error) {

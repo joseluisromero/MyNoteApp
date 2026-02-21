@@ -1,0 +1,97 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="m1"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Importar Notas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="content-container">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="cloud-download-outline"></ion-icon>
+          Importar respaldo JSON
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p class="subtitle">
+          Selecciona un archivo <strong>.json</strong> exportado desde Secure Notes y luego presiona sincronizar.
+        </p>
+
+        <ion-item lines="none">
+          <ion-checkbox
+            slot="start"
+            [checked]="wantsImport"
+            (ionChange)="onImportIntentChange($event)">
+          </ion-checkbox>
+          <ion-label>
+            <h3>Quiero importar un archivo de notas</h3>
+            <p>Al marcar esta opcion se verificara la clave maestra.</p>
+          </ion-label>
+        </ion-item>
+
+        <label class="file-label" for="json-file-input">
+          <ion-icon name="document-attach-outline"></ion-icon>
+          <span>Seleccionar archivo JSON</span>
+        </label>
+        <input id="json-file-input" type="file" accept=".json,application/json" (change)="onFileSelected($event)" [disabled]="!canImport || isParsing || isSyncing" />
+
+        <ion-item lines="none" *ngIf="fileName">
+          <ion-label>
+            <h3>Archivo cargado</h3>
+            <p>{{ fileName }}</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item lines="none" *ngIf="parsedNotes.length > 0">
+          <ion-label>
+            <h3>Notas detectadas</h3>
+            <p>{{ parsedNotes.length }} lista(s) para sincronizar</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-button fill="clear" size="small" *ngIf="parsedNotes.length > 0" (click)="showDetectedTitles = !showDetectedTitles">
+          {{ showDetectedTitles ? 'Ocultar titulos' : 'Ver titulos a importar' }}
+        </ion-button>
+
+        <div class="notes-grid" *ngIf="parsedNotes.length > 0 && showDetectedTitles">
+          <div class="note-card" *ngFor="let note of parsedNotes">
+            <p class="note-title">{{ note.title }}</p>
+          </div>
+        </div>
+
+        <div class="status-box" *ngIf="status !== 'idle'" [class]="status">
+          <ion-icon [name]="status === 'success' ? 'checkmark-circle-outline' : 'alert-circle-outline'"></ion-icon>
+          <p>{{ statusMessage }}</p>
+        </div>
+
+        <ion-button
+          expand="block"
+          class="sync-btn"
+          (click)="syncImportedNotes()"
+          [disabled]="!canImport || isParsing || isSyncing || parsedNotes.length === 0">
+          <ion-icon name="sync-outline" slot="start"></ion-icon>
+          {{ isSyncing ? 'Sincronizando...' : 'Sincronizar notas importadas' }}
+        </ion-button>
+
+        <ion-button
+          fill="clear"
+          size="small"
+          *ngIf="skippedNotes.length > 0"
+          (click)="showSkippedNotes = !showSkippedNotes">
+          {{ showSkippedNotes ? 'Ocultar no importadas' : 'Ver no importadas' }}
+        </ion-button>
+
+        <div class="notes-grid skipped-grid" *ngIf="skippedNotes.length > 0 && showSkippedNotes">
+          <div class="note-card skipped-card" *ngFor="let item of skippedNotes">
+            <p class="note-title">{{ item.title }}</p>
+            <p class="note-reason">{{ item.reason }}</p>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

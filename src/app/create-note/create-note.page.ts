@@ -93,8 +93,25 @@ export class CreateNotePage implements OnInit {
       return;
     }
 
+    const normalizedTitle = this.note.title.trim().toLowerCase();
+    if (!normalizedTitle) {
+      alert('El titulo es obligatorio.');
+      return;
+    }
+
     const guid = this.generateGUID();
     try {
+      const currentNotes = await this.noteService.getAllNotesWithHeaders('angular', 'jlromero', guid);
+      const duplicatedTitle = currentNotes.some(
+        (note) => note.title.trim().toLowerCase() === normalizedTitle
+      );
+
+      if (duplicatedTitle) {
+        alert('Ya existe una nota con ese titulo. Usa un titulo diferente.');
+        return;
+      }
+
+      this.note.title = this.note.title.trim();
       await this.noteService.createNote(this.note, 'angular', 'jlromero', guid);
       this.router.navigate(['/note-list']);
     } catch (error) {

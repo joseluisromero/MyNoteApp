@@ -23,6 +23,10 @@ export const routes: Routes = [
   {
     path: 'cloud-sync',
     loadComponent: () => import('./cloud-sync/cloud-sync.page').then( m => m.CloudSyncPage)
+  },
+  {
+    path: 'import-notes',
+    loadComponent: () => import('./import-notes/import-notes.page').then( m => m.ImportNotesPage)
   }
 
 ];
